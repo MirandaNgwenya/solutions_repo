@@ -175,6 +175,11 @@ plt.show()
    * The first set compares the ranges for different initial velocities at ground level.
    * The second set compares the ranges when the projectile is launched from a height of 5 meters.
 
+
+![alt text](image.png)
+
+![alt text](image-1.png)
+
 ### Limitations of the Model:
 
 * **Idealized Assumptions**: This model assumes no air resistance and constant gravitational acceleration.
@@ -193,3 +198,7 @@ plt.show()
 In this project, we investigated how the range of a projectile depends on its launch angle and initial conditions. The theoretical model highlighted the interplay between initial velocity, gravitational acceleration, and launch height. We implemented a Python simulation to visualize the range versus launch angle for various initial velocities. While the model is idealized, real-world factors such as air resistance, wind, and terrain can further influence the projectile's trajectory, leading to more complex simulations.
 
 ---
+
+## Colab
+
+Visit my colab: [link](https://colab.research.google.com/drive/1QJXaB8GarSTX-KdqEcIiMGUPimhgvGS3?usp=sharing)
