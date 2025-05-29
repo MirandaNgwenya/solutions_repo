@@ -172,6 +172,119 @@
 <div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
 <div class="section" itemprop="articleBody">
 <h1 id="problem-1">Problem 1</h1>
+<h1 id="orbital-period-and-orbital-radius-keplers-third-law"><strong>Orbital Period and Orbital Radius: Kepler's Third Law</strong></h1>
+<h2 id="motivation"><strong>Motivation</strong></h2>
+<p>Kepler’s Third Law provides a powerful insight into celestial mechanics, stating that:</p>
+<blockquote>
+<p><em>"The square of the orbital period of a planet is directly proportional to the cube of the semi-major axis of its orbit."</em></p>
+</blockquote>
+<p>For circular orbits, this becomes a fundamental relationship between the orbital period and orbital radius. This principle is critical in astronomy for calculating planetary distances, masses of celestial bodies, and designing satellite orbits.</p>
+<div class="arithmatex">\[
+T^2 \propto r^3
+\]</div>
+<p>This elegant relationship provides deep insight into the motion of celestial bodies and has real-world applications in calculating satellite trajectories, determining planetary masses, and exploring distant exoplanets.</p>
+<hr/>
+<h2 id="1-derivation-of-keplers-third-law-for-circular-orbits"><strong>1. Derivation of Kepler’s Third Law for Circular Orbits</strong></h2>
+<p>For an object of mass <span class="arithmatex">\(m\)</span> in a circular orbit around a much more massive object of mass <span class="arithmatex">\(M\)</span>, gravitational force provides the required centripetal force.</p>
+<h3 id="newtons-law-of-gravitation"><strong>Newton’s Law of Gravitation:</strong></h3>
+<div class="arithmatex">\[
+F_{\text{gravity}} = \frac{G M m}{r^2}
+\]</div>
+<h3 id="centripetal-force"><strong>Centripetal Force:</strong></h3>
+<div class="arithmatex">\[
+F_{\text{centripetal}} = \frac{m v^2}{r}
+\]</div>
+<p>Equating both:</p>
+<div class="arithmatex">\[
+\frac{G M m}{r^2} = \frac{m v^2}{r} \Rightarrow v^2 = \frac{G M}{r}
+\]</div>
+<h3 id="orbital-period"><strong>Orbital Period:</strong></h3>
+<div class="arithmatex">\[
+T = \frac{2\pi r}{v} \Rightarrow T^2 = \frac{4\pi^2 r^2}{v^2} = \frac{4\pi^2 r^3}{G M}
+\]</div>
+<p>Thus:</p>
+<div class="arithmatex">\[
+\boxed{T^2 \propto r^3}
+\]</div>
+<hr/>
+<h2 id="2-implications-in-astronomy"><strong>2. Implications in Astronomy</strong></h2>
+<ul>
+<li><strong>Mass Estimation</strong>: Planetary masses are derived by observing their satellites' orbits.</li>
+<li><strong>Distance Calculation</strong>: Semi-major axis of exoplanets can be estimated using orbital periods.</li>
+<li><strong>Satellite Orbits</strong>: Engineers use this principle to design satellite altitudes and periods.</li>
+<li><strong>Generalization to Elliptical Orbits</strong>: Still holds with <span class="arithmatex">\(r\)</span> replaced by the semi-major axis <span class="arithmatex">\(a\)</span>.</li>
+</ul>
+<hr/>
+<h2 id="3-real-world-examples"><strong>3. Real-World Examples</strong></h2>
+<h3 id="moons-orbit-around-earth"><strong>Moon's Orbit Around Earth</strong></h3>
+<ul>
+<li>Radius <span class="arithmatex">\(r \approx 3.84 \times 10^8\)</span> m</li>
+<li>Period <span class="arithmatex">\(T \approx 2.36 \times 10^6\)</span> s</li>
+<li>Using <span class="arithmatex">\(T^2 = \frac{4\pi^2 r^3}{G M}\)</span>, we can solve for <span class="arithmatex">\(M \approx 5.97 \times 10^{24} \, \text{kg}\)</span> (Earth’s mass)</li>
+</ul>
+<h3 id="planets-in-the-solar-system"><strong>Planets in the Solar System</strong></h3>
+<p>Each planet follows <span class="arithmatex">\(T^2 \propto r^3\)</span>. For example:</p>
+<ul>
+<li>Earth: <span class="arithmatex">\(T = 1\)</span> year, <span class="arithmatex">\(r = 1\)</span> AU</li>
+<li>Mars: <span class="arithmatex">\(T^2 = 1.88^2 \approx 3.53\)</span>, <span class="arithmatex">\(r^3 = 1.52^3 \approx 3.51\)</span></li>
+</ul>
+<hr/>
+<h2 id="4-python-simulation-verifying-keplers-third-law"><strong>4. Python Simulation: Verifying Kepler’s Third Law</strong></h2>
+<pre><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+
+# Constants
+G = 6.67430e-11  # m^3 kg^-1 s^-2
+M = 5.972e24     # Mass of Earth in kg
+
+# Orbital radii (in meters)
+radii = np.linspace(7e6, 4.2e7, 100)  # 7000 km to 42000 km
+T = 2 * np.pi * np.sqrt(radii**3 / (G * M))  # Orbital period
+
+# Plot T^2 vs r^3 to verify Kepler's 3rd Law
+plt.figure(figsize=(10, 6))
+plt.plot(radii**3, T**2, label=r'$T^2$ vs $r^3$', color='navy')
+plt.xlabel('Orbital Radius Cubed (m³)', fontsize=12)
+plt.ylabel('Orbital Period Squared (s²)', fontsize=12)
+plt.title("Kepler's Third Law: $T^2 \\propto r^3$", fontsize=14)
+plt.grid(True)
+plt.legend()
+plt.tight_layout()
+plt.show()
+</code></pre>
+<h2 id="_1"><img alt="alt text" src="../image-4.png"/></h2>
+<h2 id="5-circular-orbit-visualization"><strong>5. Circular Orbit Visualization</strong></h2>
+<pre><code class="language-python">theta = np.linspace(0, 2*np.pi, 100)
+x = np.cos(theta)
+y = np.sin(theta)
+
+plt.figure(figsize=(6, 6))
+plt.plot(x, y, label="Orbit Path")
+plt.plot(0, 0, 'yo', label="Central Body (e.g., Earth)")
+plt.axis('equal')
+plt.title("Circular Orbit Visualization")
+plt.xlabel("x")
+plt.ylabel("y")
+plt.grid(True)
+plt.legend()
+plt.tight_layout()
+plt.show()
+</code></pre>
+<h2 id="_2"><img alt="alt text" src="../image-3.png"/></h2>
+<h2 id="6-extension-to-elliptical-orbits"><strong>6. Extension to Elliptical Orbits</strong></h2>
+<p>Kepler's Third Law applies to elliptical orbits by replacing <span class="arithmatex">\(r\)</span> with the semi-major axis <span class="arithmatex">\(a\)</span>:</p>
+<div class="arithmatex">\[
+T^2 = \frac{4\pi^2 a^3}{G(M + m)} \approx \frac{4\pi^2 a^3}{G M} \quad \text{if } m \ll M
+\]</div>
+<p>This holds true for planets, comets, and exoplanets. For orbits with high eccentricity, the relationship remains accurate using the average distance.</p>
+<hr/>
+<h2 id="conclusion"><strong>Conclusion</strong></h2>
+<p>Kepler’s Third Law reveals a universal law governing orbital motion. From satellite technology to galactic dynamics, this principle enables scientists and engineers to probe and predict celestial behaviors with precision. Through computational modeling, we verified:</p>
+<div class="arithmatex">\[
+T^2 \propto r^3
+\]</div>
+<p>— bridging classical physics and modern astrophysics.</p>
+<hr/>
 </div>
 </div><footer>
 <div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
