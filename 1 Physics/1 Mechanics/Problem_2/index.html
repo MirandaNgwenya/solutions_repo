@@ -172,6 +172,128 @@
 <div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
 <div class="section" itemprop="articleBody">
 <h1 id="problem-2">Problem 2</h1>
+<p>Here is a comprehensive, structured response to your project on <strong>“Investigating the Dynamics of a Forced Damped Pendulum”</strong>, including theoretical derivations, simulation guidelines, and deliverable suggestions. This version is suitable for use in a Markdown document or Python notebook.</p>
+<hr/>
+<h1 id="investigating-the-dynamics-of-a-forced-damped-pendulum">📘 Investigating the Dynamics of a Forced Damped Pendulum</h1>
+<h2 id="motivation">🧠 Motivation</h2>
+<p>The forced damped pendulum offers a rich canvas to explore nonlinear dynamics, showcasing behaviors from predictable harmonic oscillations to chaotic motion. These dynamics are not just academic curiosities—they underpin real-world systems in engineering, physics, and nature, including suspension bridges, driven electronic circuits, and even human biomechanics.</p>
+<hr/>
+<h2 id="1-theoretical-foundation">1️⃣ Theoretical Foundation</h2>
+<h3 id="governing-equation">⚙️ Governing Equation</h3>
+<p>The general equation for a forced, damped pendulum is:</p>
+<div class="arithmatex">\[
+\frac{d^2\theta}{dt^2} + b\frac{d\theta}{dt} + \frac{g}{L} \sin\theta = A\cos(\omega t)
+\]</div>
+<p>Where:</p>
+<ul>
+<li><span class="arithmatex">\(\theta\)</span>: Angular displacement</li>
+<li><span class="arithmatex">\(b\)</span>: Damping coefficient</li>
+<li><span class="arithmatex">\(g\)</span>: Acceleration due to gravity</li>
+<li><span class="arithmatex">\(L\)</span>: Length of the pendulum</li>
+<li><span class="arithmatex">\(A\)</span>: Driving force amplitude</li>
+<li><span class="arithmatex">\(\omega\)</span>: Driving frequency</li>
+</ul>
+<h3 id="small-angle-approximation">🧮 Small-Angle Approximation</h3>
+<p>For small <span class="arithmatex">\(\theta\)</span>, we use <span class="arithmatex">\(\sin(\theta) \approx \theta\)</span>, yielding:</p>
+<div class="arithmatex">\[
+\frac{d^2\theta}{dt^2} + b\frac{d\theta}{dt} + \frac{g}{L} \theta = A\cos(\omega t)
+\]</div>
+<p>This is a linear nonhomogeneous second-order differential equation, with a general solution consisting of:</p>
+<ul>
+<li><strong>Homogeneous solution</strong> (transient behavior)</li>
+<li><strong>Particular solution</strong> (steady-state behavior)</li>
+</ul>
+<h4 id="resonance">✅ Resonance</h4>
+<p>Resonance occurs when <span class="arithmatex">\(\omega \approx \sqrt{\frac{g}{L}}\)</span>. At this point, the pendulum absorbs maximum energy from the driver, and oscillation amplitudes peak (limited by damping).</p>
+<hr/>
+<h2 id="2-analysis-of-dynamics">2️⃣ Analysis of Dynamics</h2>
+<h3 id="parameters-affecting-motion">🔁 Parameters Affecting Motion</h3>
+<ul>
+<li>
+<p><strong>Damping Coefficient <span class="arithmatex">\(b\)</span></strong>:</p>
+</li>
+<li>
+<p>Low <span class="arithmatex">\(b\)</span>: oscillations persist or grow (if driven).</p>
+</li>
+<li>
+<p>High <span class="arithmatex">\(b\)</span>: oscillations quickly decay.</p>
+</li>
+<li>
+<p><strong>Driving Amplitude <span class="arithmatex">\(A\)</span></strong>:</p>
+</li>
+<li>
+<p>Larger <span class="arithmatex">\(A\)</span> can drive the system into <strong>nonlinear</strong> or <strong>chaotic</strong> regimes.</p>
+</li>
+<li>
+<p><strong>Driving Frequency <span class="arithmatex">\(\omega\)</span></strong>:</p>
+</li>
+<li>
+<p>Near resonance: increased amplitude.</p>
+</li>
+<li>Far from resonance: suppressed oscillations.</li>
+</ul>
+<h3 id="regular-vs-chaotic-behavior">🌀 Regular vs. Chaotic Behavior</h3>
+<ul>
+<li><strong>Regular motion</strong>: Periodic, predictable.</li>
+<li><strong>Chaotic motion</strong>: Sensitive to initial conditions, non-periodic, strange attractors emerge.</li>
+</ul>
+<blockquote>
+<p><strong>Key Tool</strong>: <em>Poincaré sections</em> reveal chaos by showing where the system is at regular intervals of the driving period.</p>
+</blockquote>
+<hr/>
+<h2 id="3-practical-applications">3️⃣ Practical Applications</h2>
+<ul>
+<li><strong>Energy harvesting</strong>: Resonant mechanical systems tuned to vibrations (e.g., piezoelectric devices).</li>
+<li><strong>Suspension bridges</strong>: External forcing (e.g., wind) can cause resonant oscillations (e.g., Tacoma Narrows).</li>
+<li><strong>RLC circuits</strong>: Analogous differential equation governs voltage/current behavior in driven, damped circuits.</li>
+</ul>
+<hr/>
+<h2 id="4-implementation-python-simulation">4️⃣ Implementation – Python Simulation</h2>
+<h3 id="numerical-method">🔧 Numerical Method</h3>
+<p>Use <strong>Runge-Kutta (RK4)</strong> or <code>scipy.integrate.solve_ivp</code> to numerically integrate:</p>
+<div class="arithmatex">\[
+\begin{cases}
+\frac{d\theta}{dt} = \omega \\
+\frac{d\omega}{dt} = -b\omega - \frac{g}{L}\sin(\theta) + A\cos(\omega_{\text{drive}} t)
+\end{cases}
+\]</div>
+<h3 id="visualizations">📊 Visualizations</h3>
+<ul>
+<li><strong>Time series plots</strong> of <span class="arithmatex">\(\theta(t)\)</span> to observe resonance and chaos.</li>
+<li><strong>Phase portraits</strong> <span class="arithmatex">\((\theta, \omega)\)</span> to visualize periodicity and attractors.</li>
+<li><strong>Poincaré sections</strong> <span class="arithmatex">\((\theta, \omega)\)</span> at discrete times <span class="arithmatex">\(t = nT\)</span>, <span class="arithmatex">\(T = \frac{2\pi}{\omega_{\text{drive}}}\)</span>.</li>
+<li><strong>Bifurcation diagrams</strong>: Plot final <span class="arithmatex">\(\theta\)</span> values vs. driving amplitude/frequency to reveal transitions.</li>
+</ul>
+<hr/>
+<h2 id="sample-python-snippet">🧩 Sample Python Snippet</h2>
+<pre><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
+from scipy.integrate import solve_ivp
+
+# Parameters
+g, L = 9.81, 1.0
+b, A, omega_drive = 0.5, 1.2, 2/3
+
+def pendulum(t, y):
+    theta, omega = y
+    dtheta_dt = omega
+    domega_dt = -b*omega - (g/L)*np.sin(theta) + A*np.cos(omega_drive*t)
+    return [dtheta_dt, domega_dt]
+
+# Solve
+t_span = (0, 100)
+y0 = [0.2, 0.0]
+t_eval = np.linspace(*t_span, 10000)
+sol = solve_ivp(pendulum, t_span, y0, t_eval=t_eval)
+
+# Plot
+plt.plot(t_eval, sol.y[0])
+plt.xlabel("Time")
+plt.ylabel("Theta")
+plt.title("Forced Damped Pendulum Motion")
+plt.show()
+</code></pre>
+<p><img alt="alt text" src="../image-9.png"/></p>
 </div>
 </div><footer>
 <div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
