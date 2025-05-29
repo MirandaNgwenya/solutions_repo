@@ -176,9 +176,9 @@ plt.show()
    * The second set compares the ranges when the projectile is launched from a height of 5 meters.
 
 
-![alt text](image.png)
+![alt text](image-2.png)
 
-![alt text](image-1.png)
+![alt text](image-3.png)
 
 ### Limitations of the Model:
 
@@ -202,3 +202,4 @@ In this project, we investigated how the range of a projectile depends on its la
 ## Colab
 
 Visit my colab: [link](https://colab.research.google.com/drive/1QJXaB8GarSTX-KdqEcIiMGUPimhgvGS3?usp=sharing)
+
