@@ -84,29 +84,6 @@ Each planet follows $T^2 \propto r^3$. For example:
 
 ## **4. Python Simulation: Verifying Kepler’s Third Law**
 
-```python
-import numpy as np
-import matplotlib.pyplot as plt
-
-# Constants
-G = 6.67430e-11  # m^3 kg^-1 s^-2
-M = 5.972e24     # Mass of Earth in kg
-
-# Orbital radii (in meters)
-radii = np.linspace(7e6, 4.2e7, 100)  # 7000 km to 42000 km
-T = 2 * np.pi * np.sqrt(radii**3 / (G * M))  # Orbital period
-
-# Plot T^2 vs r^3 to verify Kepler's 3rd Law
-plt.figure(figsize=(10, 6))
-plt.plot(radii**3, T**2, label=r'$T^2$ vs $r^3$', color='navy')
-plt.xlabel('Orbital Radius Cubed (m³)', fontsize=12)
-plt.ylabel('Orbital Period Squared (s²)', fontsize=12)
-plt.title("Kepler's Third Law: $T^2 \\propto r^3$", fontsize=14)
-plt.grid(True)
-plt.legend()
-plt.tight_layout()
-plt.show()
-```
 
 
 ![alt text](image-4.png)
