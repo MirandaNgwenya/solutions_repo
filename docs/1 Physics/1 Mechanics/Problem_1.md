@@ -100,72 +100,63 @@ import matplotlib.pyplot as plt
 
 # Constants
 g = 9.81  # gravity (m/s^2)
+angles_deg = 45
+v0_list = [30, 40, 50]
+colors = ['red', 'purple', 'green']
 
-def compute_range(v0, theta_deg, h=0):
-    """
-    Compute the range of a projectile.
-    
-    Parameters:
-    - v0: Initial velocity (m/s)
-    - theta_deg: Launch angle (degrees)
-    - h: Initial height (meters), default is 0 for ground-level launches
-    
-    Returns:
-    - Range of the projectile (meters)
-    """
-    theta = np.radians(theta_deg)
-    if h == 0:
-        # Simple case: launch and landing at the same height
-        return (v0 ** 2) * np.sin(2 * theta) / g
-    else:
-        # Launch from an elevated height
-        vy = v0 * np.sin(theta)
-        vx = v0 * np.cos(theta)
-        t_flight = (vy + np.sqrt(vy**2 + 2 * g * h)) / g
-        return vx * t_flight
+# Set up plot
+fig, ax = plt.subplots(figsize=(10, 6))
+ax.set_xlabel('x')
+ax.set_ylabel('y')
 
-# Parameters
-v0_list = [10, 20, 30]  # Initial velocities in m/s
-angles = np.linspace(0, 90, 500)  # Launch angles from 0 to 90 degrees
-height = 0  # Initial height (can be adjusted)
+# Loop over each velocity
+for v0, color in zip(v0_list, colors):
+    theta = np.radians(angles_deg)
+    vx = v0 * np.cos(theta)
+    vy = v0 * np.sin(theta)
+    t_flight = 2 * vy / g
+    t = np.linspace(0, t_flight, 300)
 
-# Create plot
-plt.figure(figsize=(10, 6))
+    x = vx * t
+    y = vy * t - 0.5 * g * t**2
 
-# Plot range vs angle for each initial velocity
-for v0 in v0_list:
-    ranges = [compute_range(v0, angle, h=height) for angle in angles]
-    plt.plot(angles, ranges, label=f"v₀ = {v0} m/s")
+    ax.plot(x, y, color=color)
 
-# Customize plot
-plt.title("Projectile Range vs Launch Angle")
-plt.xlabel("Launch Angle (degrees)")
-plt.ylabel("Range (meters)")
-plt.legend()
-plt.grid(True)
+    # Add velocity arrows
+    ax.arrow(0, 0, vx * 0.5, vy * 0.5, head_width=2, head_length=2, fc=color, ec=color)
+    ax.text(vx * 0.5 + 2, vy * 0.5, f"{v0} m/s", color=color, fontsize=10)
 
-# Show the plot
-plt.show()
+# Add horizontal range indicators
+ranges = [91.8, 163, 255]
+for r in ranges:
+    ax.plot([r, r], [0, 1], 'k--', linewidth=0.8)
 
-# Example with elevated launch (height = 5 meters)
-height = 5  # Set initial height to 5 meters
-plt.figure(figsize=(10, 6))
+# Add R labels
+ax.text(91.8 / 2 - 5, -2, "R = 91.8 m", fontsize=9)
+ax.text(91.8 + (163 - 91.8) / 2 - 10, -2, "R = 163 m", fontsize=9)
+ax.text(255 / 2 - 10, -5, "R = 255 m", fontsize=9)
 
-# Plot range vs angle for each initial velocity with height
-for v0 in v0_list:
-    ranges = [compute_range(v0, angle, h=height) for angle in angles]
-    plt.plot(angles, ranges, label=f"v₀ = {v0} m/s, h = {height} m")
+# Set axis limits
+ax.set_xlim(0, 270)
+ax.set_ylim(0, 70)
 
-# Customize plot
-plt.title(f"Projectile Range vs Launch Angle (With Elevation {height} m)")
-plt.xlabel("Launch Angle (degrees)")
-plt.ylabel("Range (meters)")
-plt.grid(True)
-plt.legend()
+# Axes
+ax.axhline(0, color='black', linewidth=1)
+ax.arrow(0, 0, 0, 60, head_width=5, head_length=3, fc='k', ec='k')  # y-axis
+ax.arrow(0, 0, 260, 0, head_width=3, head_length=5, fc='k', ec='k')  # x-axis
+ax.text(265, -2, 'x', fontsize=12)
+ax.text(-5, 65, 'y', fontsize=12)
 
-# Show the plot
+plt.title("Projectile Motions at 45° with Different Initial Speeds")
+plt.grid(False)
+plt.tight_layout()
 plt.show()
 ```
+![alt text](image-10.png)
+
+
+
+
 
 ### Description of the Python Code:
 
@@ -176,9 +167,7 @@ plt.show()
    * The second set compares the ranges when the projectile is launched from a height of 5 meters.
 
 
-![alt text](image-2.png)
 
-![alt text](image-3.png)
 
 ### Limitations of the Model:
 
