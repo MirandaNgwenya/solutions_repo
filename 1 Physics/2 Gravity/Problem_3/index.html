@@ -60,7 +60,25 @@
 </li>
 <li class="toctree-l2 current"><a class="reference internal current" href="#">Problem 3</a>
 <ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="#extended-presentation-plan-markdown-python-visuals">✅ Extended Presentation Plan (Markdown + Python + Visuals)</a>
+<li class="toctree-l3"><a class="reference internal" href="#trajectories-of-a-freely-released-payload-near-earth">🚀 Trajectories of a Freely Released Payload Near Earth</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#motivation">📘 Motivation</a>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#task-breakdown">🧪 Task Breakdown</a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#1-fundamental-physics">1. 🌍 Fundamental Physics</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#2-numerical-simulation">2. 🧮 Numerical Simulation</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#3-sample-trajectories">3. 🔁 Sample Trajectories</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#4-interpretation">4. 🛰️ Interpretation</a>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="#5-real-world-applications">5. 🌍 Real-World Applications</a>
+</li>
+</ul>
 </li>
 </ul>
 </li>
@@ -174,166 +192,204 @@
 <div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
 <div class="section" itemprop="articleBody">
 <h1 id="problem-3">Problem 3</h1>
-<p>Absolutely! Let's extend the project to include:</p>
-<ol>
-<li>
-<p><strong>Heatmap and 3D plots</strong> of interference patterns:</p>
-</li>
-<li>
-<p>For <strong>1 source</strong></p>
-</li>
-<li>For <strong>2 sources</strong></li>
-<li>
-<p>For <strong>3+ sources</strong> (triangle or pentagon configuration)</p>
-</li>
-<li>
-<p><strong>Animated GIF or MP4 video</strong> showing the <strong>wave propagation over time</strong>.</p>
-</li>
-</ol>
 <hr/>
-<h2 id="extended-presentation-plan-markdown-python-visuals">✅ Extended Presentation Plan (Markdown + Python + Visuals)</h2>
-<p>Here's the enhanced layout and code additions:</p>
-<hr/>
-<h1 id="interference-patterns-on-a-water-surface-extended">🌊 Interference Patterns on a Water Surface (Extended)</h1>
-<h2 id="purpose-of-extension">📌 Purpose of Extension</h2>
-<p>We visually explore <strong>how interference patterns evolve</strong>:</p>
+<h2 id="trajectories-of-a-freely-released-payload-near-earth">🚀 <strong>Trajectories of a Freely Released Payload Near Earth</strong></h2>
+<h3 id="motivation">📘 Motivation</h3>
+<p>In spaceflight, releasing a payload from a rocket requires a precise understanding of how gravity and initial conditions affect its motion. Depending on speed and direction, the object could:</p>
 <ul>
-<li>As we increase the number of wave sources</li>
-<li>Over time, as a dynamic animation</li>
+<li>Reenter Earth's atmosphere (suborbital)</li>
+<li>Enter orbit (elliptical or circular)</li>
+<li>Escape Earth's gravity (hyperbolic trajectory)</li>
+</ul>
+<p>This study uses <strong>numerical methods and gravitational physics</strong> to analyze these possibilities.</p>
+<hr/>
+<h2 id="task-breakdown">🧪 Task Breakdown</h2>
+<h3 id="1-fundamental-physics">1. 🌍 <strong>Fundamental Physics</strong></h3>
+<p>We’ll model motion using:</p>
+<ul>
+<li><strong>Newton’s Law of Gravitation</strong>:</li>
+</ul>
+<p>$$
+  F = \frac{GMm}{r^2}
+  $$
+* <strong>Newton’s Second Law</strong>:</p>
+<p>$$
+  \vec{a} = -\frac{GM}{r^3} \vec{r}
+  $$</p>
+<p>Where:</p>
+<ul>
+<li><span class="arithmatex">\(G = 6.674 \times 10^{-11} \, \text{Nm}^2/\text{kg}^2\)</span></li>
+<li><span class="arithmatex">\(M = 5.972 \times 10^{24} \, \text{kg}\)</span> (Earth's mass)</li>
+<li><span class="arithmatex">\(R = 6371 \times 10^3 \, \text{m}\)</span> (Earth's radius)</li>
 </ul>
 <hr/>
-<h2 id="1-single-source-interference-pattern">1️⃣ <strong>Single Source Interference Pattern</strong></h2>
-<pre><code class="language-python"># Plot for ONE source
-η_single = wave_from_source(0, 0, X, Y, t)
+<h3 id="2-numerical-simulation">2. 🧮 Numerical Simulation</h3>
+<p>We’ll use the <strong>Euler or Runge-Kutta method</strong> to simulate the trajectory.</p>
+<h4 id="example-setup">Example setup:</h4>
+<pre><code class="language-python">import numpy as np
+import matplotlib.pyplot as plt
 
-# Plot as Heatmap
-plt.figure(figsize=(7, 5))
-plt.contourf(X, Y, η_single, levels=100, cmap='viridis')
-plt.title('Single Wave Source')
-plt.colorbar(label='Displacement')
-plt.xlabel('x')
-plt.ylabel('y')
+# Constants
+G = 6.67430e-11  # gravitational constant (m^3 kg^-1 s^-2)
+M = 5.972e24     # mass of Earth (kg)
+R_earth = 6.371e6  # radius of Earth (m)
+
+# Function to compute gravitational acceleration
+def gravity_acc(r):
+    norm_r = np.linalg.norm(r)
+    return -G * M * r / norm_r**3
+
+# Function to simulate trajectory using RK4 method
+def simulate_trajectory(r0, v0, dt=1, T=10000):
+    N = int(T / dt)
+    r = np.zeros((N, 2))
+    v = np.zeros((N, 2))
+
+    r[0] = r0
+    v[0] = v0
+
+    for i in range(1, N):
+        a1 = gravity_acc(r[i-1])
+        k1r = v[i-1] * dt
+        k1v = a1 * dt
+
+        a2 = gravity_acc(r[i-1] + 0.5 * k1r)
+        k2r = (v[i-1] + 0.5 * k1v) * dt
+        k2v = a2 * dt
+
+        a3 = gravity_acc(r[i-1] + 0.5 * k2r)
+        k3r = (v[i-1] + 0.5 * k2v) * dt
+        k3v = a3 * dt
+
+        a4 = gravity_acc(r[i-1] + k3r)
+        k4r = (v[i-1] + k3v) * dt
+        k4v = a4 * dt
+
+        r[i] = r[i-1] + (k1r + 2*k2r + 2*k3r + k4r) / 6
+        v[i] = v[i-1] + (k1v + 2*k2v + 2*k3v + k4v) / 6
+
+        if np.linalg.norm(r[i]) &lt; R_earth:
+            r[i:] = np.nan  # terminate on reentry
+            break
+
+    return r
+
+# Initial altitude and position
+altitude = 800e3  # 800 km above Earth's surface
+r0 = np.array([R_earth + altitude, 0])  # starting to the right of Earth center
+
+# Initial speeds in m/s (from 5 km/s to 13 km/s)
+initial_speeds = np.arange(5000, 13500, 500)
+colors = plt.cm.viridis(np.linspace(0, 1, len(initial_speeds)))
+
+# Plot setup
+plt.figure(figsize=(10, 10))
+
+for v, color in zip(initial_speeds, colors):
+    v0 = np.array([0, v])  # launch straight up from surface tangent
+    trajectory = simulate_trajectory(r0, v0, dt=1, T=20000)
+    plt.plot(trajectory[:, 0] / 1e3, trajectory[:, 1] / 1e3, label=f'{v/1e3:.1f} km/s', color=color)
+
+# Draw Earth
+earth = plt.Circle((0, 0), R_earth / 1e3, color='skyblue', label='Earth')
+plt.gca().add_patch(earth)
+
+# Plot formatting
+plt.xlabel("x position (km)")
+plt.ylabel("y position (km)")
+plt.title("Trajectories of Payloads Released at 800 km Altitude")
 plt.axis('equal')
+plt.grid(True)
+plt.legend(title="Initial Speed")
+plt.tight_layout()
+plt.show()
+
+
+</code></pre>
+<p><img alt="alt text" src="../image-17.png"/></p>
+<hr/>
+<h3 id="3-sample-trajectories">3. 🔁 Sample Trajectories</h3>
+<p>We simulate different scenarios:</p>
+<ul>
+<li><strong>Circular Orbit</strong>: <span class="arithmatex">\(v = \sqrt{GM/r}\)</span></li>
+<li><strong>Elliptical</strong>: <span class="arithmatex">\(0.7 \times v_{circ}\)</span></li>
+<li><strong>Escape</strong>: <span class="arithmatex">\(v &gt; \sqrt{2GM/r}\)</span></li>
+</ul>
+<pre><code class="language-python">altitude = 300e3  # 300 km above Earth
+r0 = np.array([R_earth + altitude, 0])
+
+v_circular = np.sqrt(G * M / np.linalg.norm(r0))
+velocities = [
+    0.7 * v_circular,  # elliptical
+    1.0 * v_circular,  # circular
+    1.5 * v_circular,  # hyperbolic/escape
+]
+
+colors = ['blue', 'green', 'red']
+labels = ['Elliptical', 'Circular', 'Escape']
+
+plt.figure(figsize=(8, 8))
+for v, c, label in zip(velocities, colors, labels):
+    traj = simulate_trajectory(r0, [0, v])
+    plt.plot(traj[:,0]/1e3, traj[:,1]/1e3, label=label, color=c)
+
+# Plot Earth
+earth = plt.Circle((0, 0), R_earth/1e3, color='skyblue')
+plt.gca().add_artist(earth)
+plt.xlabel("x (km)")
+plt.ylabel("y (km)")
+plt.axis("equal")
+plt.legend()
+plt.title("Payload Trajectories Near Earth")
+plt.grid(True)
 plt.show()
 </code></pre>
 <hr/>
-<h2 id="2-two-source-interference-pattern">2️⃣ <strong>Two Source Interference Pattern</strong></h2>
-<pre><code class="language-python"># Two sources
-sources_two = [(-2, 0), (2, 0)]
-
-η_two = np.zeros_like(X)
-for x0, y0 in sources_two:
-    η_two += wave_from_source(x0, y0, X, Y, t)
-
-plt.figure(figsize=(7, 5))
-plt.contourf(X, Y, η_two, levels=100, cmap='plasma')
-plt.title('Two Wave Sources (Linear)')
-plt.colorbar(label='Displacement')
-plt.xlabel('x')
-plt.ylabel('y')
-plt.axis('equal')
-plt.show()
-</code></pre>
+<h3 id="4-interpretation">4. 🛰️ Interpretation</h3>
+<h4 id="elliptical-orbits">🌀 <strong>Elliptical Orbits</strong></h4>
+<ul>
+<li>Result from speeds below escape velocity but above reentry thresholds.</li>
+<li>May decay into reentry if atmospheric drag is added (can be an extension).</li>
+</ul>
+<h4 id="circular-orbit">🌐 <strong>Circular Orbit</strong></h4>
+<ul>
+<li>Stable condition when orbital speed equals centripetal requirement.</li>
+</ul>
+<h4 id="escape-trajectory">🚀 <strong>Escape Trajectory</strong></h4>
+<ul>
+<li>Speed above escape velocity (11.2 km/s near Earth's surface).</li>
+<li>Payload leaves Earth’s gravitational influence.</li>
+</ul>
 <hr/>
-<h2 id="3-triangle-5-pentagon-source-interference">🔺 3️⃣ Triangle &amp; 🔷 5️⃣ Pentagon Source Interference</h2>
-<pre><code class="language-python"># Triangle (3), Pentagon (5)
-for sides in [3, 5]:
-    sources = polygon_vertices(sides)
-    η_poly = np.zeros_like(X)
-    for x0, y0 in sources:
-        η_poly += wave_from_source(x0, y0, X, Y, t)
-
-    plt.figure(figsize=(7, 5))
-    plt.contourf(X, Y, η_poly, levels=100, cmap='inferno')
-    plt.title(f'{sides}-Vertex Polygon Wave Interference')
-    plt.colorbar(label='Displacement')
-    plt.scatter(*zip(*sources), color='white', label='Sources')
-    plt.xlabel('x')
-    plt.ylabel('y')
-    plt.axis('equal')
-    plt.legend()
-    plt.show()
-</code></pre>
-<hr/>
-<h2 id="bonus-animation-gifmp4-of-wave-interference">🎞️ BONUS: <strong>Animation (GIF/MP4) of Wave Interference</strong></h2>
-<p>This part uses <code>matplotlib.animation</code> to generate a time-varying animation.</p>
-<pre><code class="language-python">import matplotlib.animation as animation
-
-# Setup: Triangle
-sources = polygon_vertices(3)
-frames = 60  # Total animation frames
-fig, ax = plt.subplots(figsize=(7, 6))
-
-def update(t_frame):
-    ax.clear()
-    t = t_frame / 10.0  # Adjust time speed
-    η_time = np.zeros_like(X)
-    for x0, y0 in sources:
-        η_time += wave_from_source(x0, y0, X, Y, t)
-    cont = ax.contourf(X, Y, η_time, levels=100, cmap='coolwarm')
-    ax.set_title(f'Wave Interference at t={t:.2f}s')
-    ax.axis('off')
-    return cont.collections
-
-ani = animation.FuncAnimation(fig, update, frames=frames, blit=False)
-
-# Save as MP4 or GIF
-ani.save("wave_interference_triangle.mp4", writer='ffmpeg', fps=15)
-# ani.save("wave_interference_triangle.gif", writer='pillow', fps=15)
-</code></pre>
-<blockquote>
-<p>⚠️ <strong>Note</strong>: <code>ffmpeg</code> or <code>pillow</code> must be installed:</p>
-</blockquote>
-<pre><code class="language-bash">pip install ffmpeg-python pillow
-</code></pre>
-<hr/>
-<p><img alt="alt text" src="../image-13.png"/></p>
-<h2 id="summary-of-observations">🧠 Summary of Observations</h2>
+<h3 id="5-real-world-applications">5. 🌍 Real-World Applications</h3>
 <table>
 <thead>
 <tr>
-<th>Sources</th>
-<th>Pattern Type</th>
-<th>Key Features</th>
+<th>Application</th>
+<th>Use of Trajectory Modeling</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Single</td>
-<td>Radial Symmetry</td>
-<td>No interference</td>
+<td>Satellite Deployment</td>
+<td>Ensure stable orbits</td>
 </tr>
 <tr>
-<td>Two</td>
-<td>Linear Interference</td>
-<td>Clear nodal/antinodal lines</td>
+<td>Reentry Planning</td>
+<td>Target specific regions</td>
 </tr>
 <tr>
-<td>Triangle</td>
-<td>Triangular Symmetry</td>
-<td>Complex lobes, circular regions</td>
+<td>Interplanetary Missions</td>
+<td>Reach transfer orbits (e.g., Hohmann)</td>
 </tr>
 <tr>
-<td>Pentagon</td>
-<td>Dense interference</td>
-<td>Highly symmetrical concentric patterns</td>
+<td>Space Tourism</td>
+<td>Suborbital path predictions</td>
 </tr>
 </tbody>
 </table>
 <hr/>
-<h2 id="output-files">📦 Output Files</h2>
-<ul>
-<li>✅ <code>wave_interference_triangle.mp4</code> – animated wave motion</li>
-<li>✅ Static heatmaps for all configurations</li>
-<li>✅ Optional 3D surface plots (add below if needed)</li>
-</ul>
-<hr/>
-<h2 id="next-steps">📥 Next Steps</h2>
-<p>Would you like:</p>
-<ul>
-<li>A <strong>downloadable ZIP</strong> with all the images and videos?</li>
-<li>Exported as a <strong>Jupyter Notebook</strong> (<code>.ipynb</code>) or <strong>Markdown with HTML embeds</strong>?</li>
-</ul>
+<h1 id="_1"></h1>
 </div>
 </div><footer>
 <div aria-label="Footer Navigation" class="rst-footer-buttons" role="navigation">
