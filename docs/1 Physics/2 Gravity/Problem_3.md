@@ -172,6 +172,8 @@ plt.grid(True)
 plt.show()
 ```
 
+![alt text](image-18.png)
+
 ---
 
 ### 4. 🛰️ Interpretation
