@@ -220,12 +220,5 @@ You can extend this simulation by:
 
 ---
 
-## ✅ Deliverables
-
-1. ✅ Complete Python code (above)
-2. ✅ Visualizations for 1, 2, 3, and 5 sources
-3. ✅ Animation using `FuncAnimation` (exportable to GIF)
-4. ✅ Explanation of observed interference patterns
-
 ---
 

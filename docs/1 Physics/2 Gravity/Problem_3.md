@@ -136,10 +136,8 @@ pip install ffmpeg-python pillow
 ![alt text](image-13.png)
 
 
-![alt text](image-14.png)
 
 
-![alt text](image-15.png)
 ## 🧠 Summary of Observations
 
 | Sources  | Pattern Type        | Key Features                           |
