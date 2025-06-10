@@ -1,179 +1,168 @@
 # Problem 3
 
----
+Absolutely! Let's extend the project to include:
 
-# **Escape Velocities and Cosmic Velocities**
+1. **Heatmap and 3D plots** of interference patterns:
 
-## **Motivation**
+   * For **1 source**
+   * For **2 sources**
+   * For **3+ sources** (triangle or pentagon configuration)
 
-Understanding the speeds required to enter orbit, escape planetary gravity, or even leave the Solar System is foundational to space exploration. These speeds—called **cosmic velocities**—determine how we launch satellites, send missions to other planets, and plan interstellar probes.
-
----
-
-## **1. Definitions of Cosmic Velocities**
-
-| Cosmic Velocity    | Description                                                     | Formula                                     |
-| ------------------ | --------------------------------------------------------------- | ------------------------------------------- |
-| **First** ($v_1$)  | Minimum speed to achieve stable circular orbit near the surface | $v_1 = \sqrt{\frac{GM}{R}}$                 |
-| **Second** ($v_2$) | Minimum speed to escape the planet’s gravity                    | $v_2 = \sqrt{\frac{2GM}{R}}$                |
-| **Third** ($v_3$)  | Speed to escape the star system from a planet’s orbit           | $v_3 = \sqrt{v_2^2 + v_{\text{orbital}}^2}$ |
-
-Where:
-
-* $G = 6.674 \times 10^{-11} \, \text{m}^3\,\text{kg}^{-1}\,\text{s}^{-2}$
-* $M$: Mass of the celestial body
-* $R$: Radius of the celestial body
+2. **Animated GIF or MP4 video** showing the **wave propagation over time**.
 
 ---
 
-## **2. Mathematical Derivations**
+## ✅ Extended Presentation Plan (Markdown + Python + Visuals)
 
-### **First Cosmic Velocity**
-
-For a stable circular orbit at radius $R$:
-
-$$
-v_1 = \sqrt{\frac{GM}{R}}
-$$
-
-### **Second Cosmic Velocity (Escape Velocity)**
-
-Set total energy to zero (kinetic + gravitational potential):
-
-$$
-\frac{1}{2}mv^2 - \frac{GMm}{R} = 0 \Rightarrow v = \sqrt{\frac{2GM}{R}}
-$$
-
-### **Third Cosmic Velocity**
-
-Escape velocity from the Sun starting from Earth’s orbit:
-
-$$
-v_3 = \sqrt{v_2^2 + v_{\text{Earth orbit}}^2}
-$$
-
-Where $v_{\text{Earth orbit}} \approx 29.78 \times 10^3$ m/s.
+Here's the enhanced layout and code additions:
 
 ---
 
-## **3. Python Code: Computing Cosmic Velocities**
+# 🌊 Interference Patterns on a Water Surface (Extended)
+
+## 📌 Purpose of Extension
+
+We visually explore **how interference patterns evolve**:
+
+* As we increase the number of wave sources
+* Over time, as a dynamic animation
+
+---
+
+## 1️⃣ **Single Source Interference Pattern**
 
 ```python
-import numpy as np
-import matplotlib.pyplot as plt
+# Plot for ONE source
+η_single = wave_from_source(0, 0, X, Y, t)
 
-# Constants
-G = 6.67430e-11  # gravitational constant, m^3 kg^-1 s^-2
-
-# Celestial bodies: name -> (mass in kg, radius in meters)
-bodies = {
-    "Earth": (5.972e24, 6.371e6),
-    "Mars": (6.417e23, 3.3895e6),
-    "Jupiter": (1.898e27, 6.9911e7)
-}
-
-def compute_cosmic_velocities(mass, radius):
-    v1 = np.sqrt(G * mass / radius)
-    v2 = np.sqrt(2) * v1
-    return v1, v2
-
-# Compute velocities
-results = {}
-for planet, (mass, radius) in bodies.items():
-    v1, v2 = compute_cosmic_velocities(mass, radius)
-    results[planet] = {'v1': v1, 'v2': v2}
-
-# Display results
-for planet, v in results.items():
-    print(f"{planet}:")
-    print(f"  First Cosmic Velocity (v1): {v['v1']:.2f} m/s")
-    print(f"  Second Cosmic Velocity (v2): {v['v2']:.2f} m/s\n")
-```
-
-Earth:
-  First Cosmic Velocity (v1): 7909.68 m/s
-  Second Cosmic Velocity (v2): 11185.98 m/s
-
-Mars:
-  First Cosmic Velocity (v1): 3554.68 m/s
-  Second Cosmic Velocity (v2): 5027.08 m/s
-
-Jupiter:
-  First Cosmic Velocity (v1): 42567.51 m/s
-  Second Cosmic Velocity (v2): 60199.54 m/s
----
-
-## **4. Visualization**
-
-### **Bar Chart of Velocities**
-
-```python
-labels = list(results.keys())
-v1_vals = [results[planet]['v1'] for planet in labels]
-v2_vals = [results[planet]['v2'] for planet in labels]
-
-x = np.arange(len(labels))
-width = 0.35
-
-plt.figure(figsize=(10, 6))
-plt.bar(x - width/2, v1_vals, width, label='1st Cosmic Velocity')
-plt.bar(x + width/2, v2_vals, width, label='2nd Cosmic Velocity')
-plt.xticks(x, labels)
-plt.ylabel('Velocity (m/s)')
-plt.title('Cosmic Velocities for Earth, Mars, and Jupiter')
-plt.legend()
-plt.grid(True, linestyle='--', alpha=0.5)
-plt.tight_layout()
+# Plot as Heatmap
+plt.figure(figsize=(7, 5))
+plt.contourf(X, Y, η_single, levels=100, cmap='viridis')
+plt.title('Single Wave Source')
+plt.colorbar(label='Displacement')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.axis('equal')
 plt.show()
 ```
 
 ---
 
-## **5. Third Cosmic Velocity (Escape the Solar System)**
+## 2️⃣ **Two Source Interference Pattern**
 
-From Earth:
+```python
+# Two sources
+sources_two = [(-2, 0), (2, 0)]
 
-* $v_2 \approx 11.2 \times 10^3 \, \text{m/s}$
-* $v_{\text{Earth orbit}} \approx 29.78 \times 10^3 \, \text{m/s}$
+η_two = np.zeros_like(X)
+for x0, y0 in sources_two:
+    η_two += wave_from_source(x0, y0, X, Y, t)
 
-$$
-v_3 = \sqrt{(11.2 \times 10^3)^2 + (29.78 \times 10^3)^2} \approx 42.1 \times 10^3 \, \text{m/s}
-$$
-
----
-
-## **6. Importance in Space Exploration**
-
-| Application                   | Required Velocity |
-| ----------------------------- | ----------------- |
-| Satellite Orbiting            | $v_1$             |
-| Escape to Moon/Mars           | $v_2$             |
-| Voyager/Interstellar Missions | $v_3$             |
-
-* **Launch Vehicles**: Must reach $v_2$ to leave Earth.
-* **Transfer Orbits**: Use combinations of $v_1$ and gravity assists.
-* **Deep Space Missions**: Require planning to reach $v_3$ using multiple planetary flybys.
+plt.figure(figsize=(7, 5))
+plt.contourf(X, Y, η_two, levels=100, cmap='plasma')
+plt.title('Two Wave Sources (Linear)')
+plt.colorbar(label='Displacement')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.axis('equal')
+plt.show()
+```
 
 ---
 
-## **7. Summary Table**
+## 🔺 3️⃣ Triangle & 🔷 5️⃣ Pentagon Source Interference
 
-| Planet  | 1st Cosmic Velocity (m/s) | 2nd Cosmic Velocity (m/s) |
-| ------- | ------------------------- | ------------------------- |
-| Earth   | \~7,905                   | \~11,186                  |
-| Mars    | \~3,550                   | \~5,030                   |
-| Jupiter | \~42,000                  | \~59,540                  |
+```python
+# Triangle (3), Pentagon (5)
+for sides in [3, 5]:
+    sources = polygon_vertices(sides)
+    η_poly = np.zeros_like(X)
+    for x0, y0 in sources:
+        η_poly += wave_from_source(x0, y0, X, Y, t)
+
+    plt.figure(figsize=(7, 5))
+    plt.contourf(X, Y, η_poly, levels=100, cmap='inferno')
+    plt.title(f'{sides}-Vertex Polygon Wave Interference')
+    plt.colorbar(label='Displacement')
+    plt.scatter(*zip(*sources), color='white', label='Sources')
+    plt.xlabel('x')
+    plt.ylabel('y')
+    plt.axis('equal')
+    plt.legend()
+    plt.show()
+```
 
 ---
 
-## **Conclusion**
+## 🎞️ BONUS: **Animation (GIF/MP4) of Wave Interference**
 
-Cosmic velocities are fundamental for any space mission:
+This part uses `matplotlib.animation` to generate a time-varying animation.
 
-* **v₁**: for stable orbits,
-* **v₂**: for escape trajectories,
-* **v₃**: for interstellar travel.
+```python
+import matplotlib.animation as animation
 
-These concepts are essential in mission planning, propulsion design, and the future of human spaceflight.
+# Setup: Triangle
+sources = polygon_vertices(3)
+frames = 60  # Total animation frames
+fig, ax = plt.subplots(figsize=(7, 6))
 
---
+def update(t_frame):
+    ax.clear()
+    t = t_frame / 10.0  # Adjust time speed
+    η_time = np.zeros_like(X)
+    for x0, y0 in sources:
+        η_time += wave_from_source(x0, y0, X, Y, t)
+    cont = ax.contourf(X, Y, η_time, levels=100, cmap='coolwarm')
+    ax.set_title(f'Wave Interference at t={t:.2f}s')
+    ax.axis('off')
+    return cont.collections
+
+ani = animation.FuncAnimation(fig, update, frames=frames, blit=False)
+
+# Save as MP4 or GIF
+ani.save("wave_interference_triangle.mp4", writer='ffmpeg', fps=15)
+# ani.save("wave_interference_triangle.gif", writer='pillow', fps=15)
+```
+
+> ⚠️ **Note**: `ffmpeg` or `pillow` must be installed:
+
+```bash
+pip install ffmpeg-python pillow
+```
+
+
+---
+
+![alt text](image-13.png)
+
+
+![alt text](image-14.png)
+
+
+![alt text](image-15.png)
+## 🧠 Summary of Observations
+
+| Sources  | Pattern Type        | Key Features                           |
+| -------- | ------------------- | -------------------------------------- |
+| Single   | Radial Symmetry     | No interference                        |
+| Two      | Linear Interference | Clear nodal/antinodal lines            |
+| Triangle | Triangular Symmetry | Complex lobes, circular regions        |
+| Pentagon | Dense interference  | Highly symmetrical concentric patterns |
+
+---
+
+## 📦 Output Files
+
+* ✅ `wave_interference_triangle.mp4` – animated wave motion
+* ✅ Static heatmaps for all configurations
+* ✅ Optional 3D surface plots (add below if needed)
+
+---
+
+## 📥 Next Steps
+
+Would you like:
+
+* A **downloadable ZIP** with all the images and videos?
+* Exported as a **Jupyter Notebook** (`.ipynb`) or **Markdown with HTML embeds**?
+
