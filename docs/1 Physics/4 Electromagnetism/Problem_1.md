@@ -1,187 +1,244 @@
 # Problem 1
 
+---
+
+# **Simulating Particle Motion Under the Lorentz Force**
+
+## **Motivation**
+
+The **Lorentz force**
+
+$$
+\vec{F} = q(\vec{E} + \vec{v} \times \vec{B})
+$$
+
+governs the dynamics of charged particles in electromagnetic fields. It underpins technologies such as:
+
+* **Particle accelerators**: where magnetic and electric fields steer and accelerate particles.
+* **Mass spectrometers**: using curved trajectories in magnetic fields to separate ions by mass-to-charge ratio.
+* **Plasma confinement systems**: like tokamaks, which use magnetic fields to confine high-temperature plasmas.
 
 ---
 
-## 🧠 Algorithm Overview (Graph-Theoretic Equivalent Resistance)
+## **1. Exploration of Applications**
 
-### 🧩 Circuit Representation:
+### **Key Systems Using the Lorentz Force**
 
-* Represent the circuit as an **undirected graph** `G = (V, E)`
+| System                       | Role of Lorentz Force                                                         |
+| ---------------------------- | ----------------------------------------------------------------------------- |
+| **Cyclotron**                | Magnetic fields induce circular motion; electric fields accelerate particles. |
+| **Mass Spectrometer**        | Charged ions deflect differently based on their mass/charge ratio.            |
+| **Tokamak (Fusion Reactor)** | Magnetic fields guide and confine hot plasma.                                 |
+| **Cathode Ray Tube (CRT)**   | Electric and magnetic fields steer electrons to specific screen positions.    |
 
-  * **Nodes (V)** are electrical junctions.
-  * **Edges (E)** are resistors, with weights representing resistance in ohms.
+### **Role of Electric and Magnetic Fields**
 
----
-
-### 🔁 Reduction Strategy:
-
-1. **Series Detection**:
-
-   * If a node has **degree 2**, and is not a terminal node, and the two adjacent resistors are not part of a cycle → combine them in series:
-
-     $$
-     R_{\text{eq}} = R_1 + R_2
-     $$
-
-2. **Parallel Detection**:
-
-   * If multiple resistors connect **the same pair of nodes** → combine in parallel:
-
-     $$
-     \frac{1}{R_{\text{eq}}} = \sum_i \frac{1}{R_i}
-     $$
-
-3. **Repeat** reductions until only **two nodes remain** (source and sink).
+* **Electric Fields ($\vec{E}$)**: Accelerate charged particles in straight lines.
+* **Magnetic Fields ($\vec{B}$)**: Cause particles to move in circular or helical paths due to the $\vec{v} \times \vec{B}$ force.
+* **Crossed Fields**: Can create **drift motions**, such as **E × B** drift.
 
 ---
 
-### 📜 Pseudocode Summary
+## **2. Simulating Particle Motion**
 
-```text
-function compute_equivalent_resistance(graph, node_start, node_end):
-    while graph has more than two nodes:
-        for each node in graph:
-            if node is not start or end:
-                if degree(node) == 2 and not in a cycle:
-                    combine series resistors
-        for each pair of nodes with multiple edges:
-            combine parallel resistors
-    return resistance between node_start and node_end
-```
+We’ll use **Euler’s method** for simplicity, though **Runge-Kutta** is better for accuracy.
 
----
-
-## 🧪 Full Python Implementation
+### **Python Implementation**
 
 ```python
-import networkx as nx
+import numpy as np
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
-def combine_parallel_edges(G):
-    """Combine all parallel resistors between the same two nodes."""
-    edges = list(G.edges(data=True))
-    seen = set()
-    for u, v, data in edges:
-        if (u, v) in seen or (v, u) in seen:
-            continue
-        parallels = [(a, b, d) for a, b, d in edges if (a == u and b == v) or (a == v and b == u)]
-        if len(parallels) > 1:
-            # Combine using reciprocal rule
-            inv_sum = sum(1 / d['resistance'] for _, _, d in parallels)
-            R_eq = 1 / inv_sum
-            G.remove_edges_from([(a, b) for a, b, _ in parallels])
-            G.add_edge(u, v, resistance=R_eq)
-        seen.add((u, v))
+# Lorentz force calculation
+def lorentz_force(q, v, E, B):
+    return q * (E + np.cross(v, B))
 
-def combine_series_nodes(G, start, end):
-    """Combine series resistors at non-terminal, degree-2 nodes not in cycles."""
-    nodes_to_check = [n for n in G.nodes() if n not in (start, end) and G.degree[n] == 2]
-    for node in nodes_to_check:
-        if not nx.cycle_basis(G, node):
-            neighbors = list(G.neighbors(node))
-            if len(neighbors) == 2:
-                u, v = neighbors
-                R1 = G[u][node]['resistance']
-                R2 = G[node][v]['resistance']
-                R_eq = R1 + R2
-                G.remove_node(node)
-                G.add_edge(u, v, resistance=R_eq)
+# Particle motion simulation using Euler's method
+def simulate_particle_motion(q, m, E, B, v0, r0, dt=1e-6, steps=10000):
+    r = np.zeros((steps, 3))
+    v = np.zeros((steps, 3))
+    r[0], v[0] = r0, v0
 
-def equivalent_resistance(G, start, end):
-    """Reduce graph to compute equivalent resistance between start and end."""
-    while True:
-        prev_num_nodes = G.number_of_nodes()
-        prev_num_edges = G.number_of_edges()
+    for i in range(1, steps):
+        F = lorentz_force(q, v[i-1], E, B)
+        a = F / m
+        v[i] = v[i-1] + a * dt
+        r[i] = r[i-1] + v[i] * dt
 
-        combine_parallel_edges(G)
-        combine_series_nodes(G, start, end)
+    return r
 
-        if G.number_of_nodes() == 2 and G.has_edge(start, end):
-            return G[start][end]['resistance']
-        if G.number_of_nodes() == prev_num_nodes and G.number_of_edges() == prev_num_edges:
-            break  # No further simplification possible
+# Common parameters
+q = 1.0  # Coulombs
+m = 0.001  # kg
 
-    # If no direct edge, use resistance computation via network
-    # Use Kirchhoff-based method:
-    return resistance_via_laplacian(G, start, end)
+# Scenario A: Circular motion in magnetic field
+E_a = np.array([0.0, 0.0, 0.0])
+B_a = np.array([0.0, 0.0, 1.0])
+v0_a = np.array([10.0, 0.0, 0.0])
+r0_a = np.array([0.0, 0.0, 0.0])
+r_a = simulate_particle_motion(q, m, E_a, B_a, v0_a, r0_a)
 
-def resistance_via_laplacian(G, start, end):
-    """Use Laplacian matrix to compute effective resistance between nodes."""
-    import numpy as np
-    L = nx.laplacian_matrix(G, weight='conductance').toarray()
-    L = np.array(L, dtype=float)
+# Scenario B: E x B drift
+E_b = np.array([10.0, 0.0, 0.0])
+B_b = np.array([0.0, 0.0, 1.0])
+v0_b = np.array([0.0, 0.0, 0.0])
+r0_b = np.array([0.0, 0.0, 0.0])
+r_b = simulate_particle_motion(q, m, E_b, B_b, v0_b, r0_b)
 
-    # Add conductance = 1/R
-    for u, v, d in G.edges(data=True):
-        G[u][v]['conductance'] = 1 / d['resistance']
+# Scenario C: Helical motion in magnetic field
+E_c = np.array([0.0, 0.0, 0.0])
+B_c = np.array([0.0, 0.0, 1.0])
+v0_c = np.array([10.0, 0.0, 5.0])
+r0_c = np.array([0.0, 0.0, 0.0])
+r_c = simulate_particle_motion(q, m, E_c, B_c, v0_c, r0_c)
 
-    # Remove one row/column to make Laplacian invertible
-    L = L[:-1, :-1]
-    L_inv = np.linalg.pinv(L)
+# Plotting all 3 scenarios
+fig = plt.figure(figsize=(15, 10))
 
-    # Compute potential difference
-    b = np.zeros(len(L) + 1)
-    b[start] = 1
-    b[end] = -1
-    b = b[:-1]  # same shape as L_inv
-    V = L_inv @ b
+# Circular motion
+ax1 = fig.add_subplot(131, projection='3d')
+ax1.plot(r_a[:, 0], r_a[:, 1], r_a[:, 2])
+ax1.set_title("Circular Trajectory in Magnetic Field")
+ax1.set_xlabel("x [m]")
+ax1.set_ylabel("y [m]")
+ax1.set_zlabel("z [m]")
 
-    return abs(V[start] - V[end])
+# E x B drift
+ax2 = fig.add_subplot(132, projection='3d')
+ax2.plot(r_b[:, 0], r_b[:, 1], r_b[:, 2])
+ax2.set_title("E × B Drift of Charged Particle")
+ax2.set_xlabel("x [m]")
+ax2.set_ylabel("y [m]")
+ax2.set_zlabel("z [m]")
+
+# Spiral motion
+ax3 = fig.add_subplot(133, projection='3d')
+ax3.plot(r_c[:, 0], r_c[:, 1], r_c[:, 2])
+ax3.set_title("Stable Spiral Trajectory in Magnetic Field")
+ax3.set_xlabel("x [m]")
+ax3.set_ylabel("y [m]")
+ax3.set_zlabel("z [m]")
+
+plt.tight_layout()
+plt.show()
+
 ```
 
----
 
-## 🧪 Test Examples
+## **3. Parameter Exploration and Motion Types**
+
+### **Physical Constants**
 
 ```python
-# Example 1: Simple Series
-G1 = nx.Graph()
-G1.add_edge(0, 1, resistance=5)
-G1.add_edge(1, 2, resistance=10)
-print("Series (5Ω + 10Ω):", equivalent_resistance(G1, 0, 2))  # Expect 15Ω
-
-# Example 2: Simple Parallel
-G2 = nx.Graph()
-G2.add_edge(0, 1, resistance=5)
-G2.add_edge(0, 1, resistance=10)
-print("Parallel (5Ω || 10Ω):", equivalent_resistance(G2, 0, 1))  # Expect 3.33Ω
-
-# Example 3: Nested Network
-G3 = nx.Graph()
-G3.add_edge(0, 1, resistance=3)
-G3.add_edge(1, 2, resistance=6)
-G3.add_edge(2, 3, resistance=3)
-G3.add_edge(0, 3, resistance=6)
-G3.add_edge(1, 3, resistance=2)
-print("Complex network:", equivalent_resistance(G3, 0, 3))  # Combines nested series + parallel
+q = 1.0         # 1 Coulomb
+m = 0.001       # 1 gram = 0.001 kg
 ```
 
+### **Example: Circular Motion in a Uniform Magnetic Field**
+
+```python
+B = np.array([0, 0, 1])
+E = np.array([0, 0, 0])
+v0 = np.array([10.0, 0, 0])
+r0 = np.array([0, 0, 0])
+
+r, v = simulate_particle(q, m, E, B, v0, r0)
+
+plt.figure()
+plt.plot(r[:, 0], r[:, 1])
+plt.title("Circular Motion (Uniform Magnetic Field)")
+plt.xlabel("x [m]")
+plt.ylabel("y [m]")
+plt.axis('equal')
+plt.grid()
+plt.show()
+```
+
+### **Helical Motion (Spiral in z-direction)**
+
+```python
+v0 = np.array([10.0, 0, 5.0])
+r, v = simulate_particle(q, m, E, B, v0, r0)
+
+fig = plt.figure()
+ax = fig.add_subplot(111, projection='3d')
+ax.plot(r[:, 0], r[:, 1], r[:, 2])
+ax.set_title("Helical Motion (z-direction spiral)")
+plt.show()
+```
+
+### **Crossed E and B Fields (Interesting Drift Trajectory)**
+
+```python
+E = np.array([10.0, 0, 0])
+B = np.array([0, 0, 1.0])
+v0 = np.array([0, 0, 0])
+r, v = simulate_particle(q, m, E, B, v0, r0)
+
+plt.figure()
+plt.plot(r[:, 0], r[:, 1])
+plt.title("E × B Drift Motion")
+plt.xlabel("x [m]")
+plt.ylabel("y [m]")
+plt.axis('equal')
+plt.grid()
+plt.show()
+```
+![alt text](image-1.png)
 ---
 
-## 📊 Efficiency & Improvements
+## **4. Visualizing and Interpreting Results**
 
-### Time Complexity
+* **Larmor Radius**:
 
-* **Series/parallel reductions**: linear in number of nodes/edges
-* **Cycle detection**: DFS or union-find for optimization
-* **Laplacian resistance**: O(n³) (matrix pseudoinverse) — expensive for large graphs
+  $$
+  r_L = \frac{mv_{\perp}}{qB}
+  $$
 
-### Improvements
+  where $v_\perp$ is the velocity component perpendicular to $\vec{B}$.
 
-* Use **disjoint-set (Union-Find)** for faster cycle detection
-* Optimize with **graph contraction** strategies
-* Integrate **symbolic computation** for algebraic solutions (with `sympy`)
+* **Drift Velocity**:
+
+  $$
+  \vec{v}_d = \frac{\vec{E} \times \vec{B}}{B^2}
+  $$
+
+### **Summary of Observed Motions**
+
+| Scenario                        | Motion Type | Notable Features                                     |
+| ------------------------------- | ----------- | ---------------------------------------------------- |
+| Uniform $\vec{B}$, no $\vec{E}$ | Circle      | Larmor radius from speed, B                          |
+| Uniform $\vec{B}$, $v_z \neq 0$ | Helix       | Constant z-velocity, circular xy-plane               |
+| $\vec{E} \perp \vec{B}$         | Drift       | Straight drift in $\vec{E} \times \vec{B}$ direction |
 
 ---
 
-## ✅ Summary
+## **5. Real-World Implications**
 
-* Graph theory simplifies the modeling and analysis of electrical circuits.
-* This method is **modular**, **scalable**, and works with **arbitrary topologies**.
-* The algorithm handles **series**, **parallel**, and **nested** configurations with minimal code changes.
-* Future improvements could support symbolic calculations or real-time simulation.
+| Application           | Observed Effect                               | Simulation Parallel            |
+| --------------------- | --------------------------------------------- | ------------------------------ |
+| **Cyclotron**         | Circular motion with increasing energy        | Uniform B with perpendicular E |
+| **Tokamak**           | Charged particle spiraling around field lines | Helical motion                 |
+| **Mass Spectrometer** | Radius depends on m/q                         | Larmor radius relation         |
 
 ---
 
+## **6. Extensions and Further Exploration**
 
+* **Non-uniform fields**: Vary $B(x, y, z)$ and $E(x, y, z)$.
+* **Runge-Kutta methods**: More accurate integration for high-energy or long-duration simulations.
+* **Relativistic effects**: Include Lorentz factor for very high speeds.
+* **Particle interactions**: Simulate plasma behavior by adding Coulomb forces.
 
+---
+
+## **Conclusion**
+
+This simulation demonstrates how the Lorentz force governs charged particle trajectories in electromagnetic fields. The simple case of a 1 C charge and 1 g mass illustrates:
+
+* Perfect circular motion in magnetic fields.
+* Helical motion when there's a velocity component along $\vec{B}$.
+* Drift in crossed fields showing real phenomena like **E × B drift**.
+
+---
