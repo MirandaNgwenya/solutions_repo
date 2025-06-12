@@ -83,9 +83,13 @@ simulate_clt(np.random.exponential, (1,), 'Exponential(λ=1)', 1.0, 1.0)
 # Binomial (n=10, p=0.5)
 simulate_clt(np.random.binomial, (10, 0.5), 'Binomial(n=10, p=0.5)', 5.0, np.sqrt(10*0.5*0.5))
 ```
+![alt text](<electro 3.png>)
+
+![alt text](electro2.png)
+
+![alt text](electro.png)
 
 
-![alt text](image-4.png)
 ---
 
 ### 🧠 Analysis
