@@ -132,7 +132,8 @@ plt.xlabel('x'); plt.ylabel('y')
 plt.show()
 ```
 
-![alt text](image-2.png)
+![alt text](<wave 1-1.gif>)
+!
 
 ### C. **Triangle (3 Sources)**
 
@@ -219,6 +220,10 @@ You can extend this simulation by:
 * Animating the system in **real time** for physical realism
 
 ---
+
+
+
+
 
 ---
 
