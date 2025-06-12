@@ -132,5 +132,5 @@ $$
   * Pendulum assumed as point mass and massless string
 
 ---
-<video controls src="my pendulum.mp4" title="Title"></video>
+
 
