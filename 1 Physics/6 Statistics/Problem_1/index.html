@@ -84,21 +84,25 @@
 <ul class="current">
 <li class="toctree-l2 current"><a class="reference internal current" href="#">Problem 1</a>
 <ul class="current">
-<li class="toctree-l3"><a class="reference internal" href="#exploring-the-central-limit-theorem-through-simulations">📘 Exploring the Central Limit Theorem through Simulations</a>
+<li class="toctree-l3"><a class="reference internal" href="#statistics-project-clt-pi-simulation">🧮 Statistics Project: CLT &amp; Pi Simulation</a>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#part-1-exploring-the-central-limit-theorem-clt-through-simulations">📘 Part 1: Exploring the Central Limit Theorem (CLT) through Simulations</a>
 <ul>
-<li class="toctree-l4"><a class="reference internal" href="#motivation">🎯 Motivation</a>
+<li class="toctree-l4"><a class="reference internal" href="#objective">🔍 Objective</a>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="#1-simulating-sampling-distributions">📊 1. Simulating Sampling Distributions</a>
+<li class="toctree-l4"><a class="reference internal" href="#definitions">📖 Definitions</a>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="#2-sampling-and-visualization">📈 2. Sampling and Visualization</a>
+<li class="toctree-l4"><a class="reference internal" href="#methodology">⚙️ Methodology</a>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="#3-parameter-exploration">🔍 3. Parameter Exploration</a>
+<li class="toctree-l4"><a class="reference internal" href="#code-with-visualizations-and-definitions">📊 Code with Visualizations and Definitions</a>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="#4-practical-applications-of-clt">🛠️ 4. Practical Applications of CLT</a>
+</ul>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="#conclusion">📌 Conclusion</a>
+<li class="toctree-l3"><a class="reference internal" href="#_1"></a>
+<ul>
+<li class="toctree-l4"><a class="reference internal" href="#analysis">🧠 Analysis</a>
 </li>
-<li class="toctree-l4"><a class="reference internal" href="#resources">📎 Resources</a>
+<li class="toctree-l4"><a class="reference internal" href="#real-world-applications-of-clt">🌍 Real-World Applications of CLT</a>
 </li>
 </ul>
 </li>
@@ -190,116 +194,94 @@
 <div class="document" itemscope="itemscope" itemtype="http://schema.org/Article" role="main">
 <div class="section" itemprop="articleBody">
 <h1 id="problem-1">Problem 1</h1>
+<p>Here's an updated, detailed, and polished version of your <strong>Statistics Project</strong> combining the <strong>Central Limit Theorem (CLT)</strong> and <strong>Pi Simulation</strong> problems. This version includes definitions, visualizations, convergence analysis, and structure for a high-quality report or notebook.</p>
 <hr/>
-<h2 id="exploring-the-central-limit-theorem-through-simulations">📘 Exploring the Central Limit Theorem through Simulations</h2>
-<h3 id="motivation">🎯 Motivation</h3>
-<p>The <strong>Central Limit Theorem (CLT)</strong> asserts that the sampling distribution of the sample mean tends toward a <strong>normal distribution</strong>, even when the underlying population distribution is not normal, as long as the sample size is sufficiently large. This simulation-based project allows us to witness this powerful result across different population distributions.</p>
+<h2 id="statistics-project-clt-pi-simulation">🧮 Statistics Project: CLT &amp; Pi Simulation</h2>
 <hr/>
-<h3 id="1-simulating-sampling-distributions">📊 1. Simulating Sampling Distributions</h3>
-<p>We'll consider three population distributions:</p>
+<h2 id="part-1-exploring-the-central-limit-theorem-clt-through-simulations">📘 Part 1: Exploring the Central Limit Theorem (CLT) through Simulations</h2>
+<h3 id="objective">🔍 Objective</h3>
+<p>To visually and computationally explore the Central Limit Theorem using simulations from various probability distributions and demonstrate how the sample mean converges to a normal distribution as sample size increases.</p>
+<hr/>
+<h3 id="definitions">📖 Definitions</h3>
 <ul>
-<li><strong>Uniform Distribution</strong>: <span class="arithmatex">\(U(a, b)\)</span></li>
-<li><strong>Exponential Distribution</strong>: <span class="arithmatex">\(\text{Exp}(\lambda)\)</span></li>
-<li><strong>Binomial Distribution</strong>: <span class="arithmatex">\(\text{Bin}(n, p)\)</span></li>
+<li>
+<p><strong>Central Limit Theorem (CLT):</strong> States that, for a sufficiently large sample size, the distribution of the sample mean of any independent, identically distributed (i.i.d.) random variables approaches a normal distribution, regardless of the original population’s distribution.</p>
+</li>
+<li>
+<p><strong>Sample Mean (<span class="arithmatex">\(\bar{X}\)</span>)</strong>:</p>
+</li>
 </ul>
+<p>$$
+  \bar{X} = \frac{1}{n} \sum_{i=1}^n X_i
+  $$</p>
+<p>The average value from a random sample of <span class="arithmatex">\(n\)</span> observations.</p>
+<ul>
+<li><strong>Population Distribution:</strong> The original distribution from which we draw samples (e.g., Uniform, Exponential, Binomial).</li>
+</ul>
+<hr/>
+<h3 id="methodology">⚙️ Methodology</h3>
+<ul>
+<li>Choose three distributions: <strong>Uniform</strong>, <strong>Exponential</strong>, <strong>Binomial</strong></li>
+<li>For each, simulate the population with 100,000 data points.</li>
+<li>Randomly draw multiple samples of size <span class="arithmatex">\(n = 5, 10, 30, 50\)</span></li>
+<li>Repeat 1000 times for each sample size and distribution</li>
+<li>Plot histograms of the sample means</li>
+<li>Overlay a normal distribution curve for comparison</li>
+<li>Analyze convergence visually and quantitatively</li>
+</ul>
+<hr/>
+<h3 id="code-with-visualizations-and-definitions">📊 Code with Visualizations and Definitions</h3>
 <pre><code class="language-python">import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
+from scipy.stats import norm
 
-sns.set(style="whitegrid")
-np.random.seed(42)  # for reproducibility
-
-# Generate population datasets
-population_size = 100_000
-
-uniform_pop = np.random.uniform(0, 1, population_size)
-exponential_pop = np.random.exponential(scale=1.0, size=population_size)
-binomial_pop = np.random.binomial(n=10, p=0.5, size=population_size)
-</code></pre>
-<hr/>
-<h3 id="2-sampling-and-visualization">📈 2. Sampling and Visualization</h3>
-<p>We sample from each population and compute the sample mean for varying sample sizes.</p>
-<pre><code class="language-python">def generate_sample_means(population, sample_size, n_samples=1000):
-    return [np.mean(np.random.choice(population, sample_size)) for _ in range(n_samples)]
-
-def plot_sampling_distribution(sample_means, title):
-    sns.histplot(sample_means, kde=True, stat="density", bins=30)
-    plt.title(title)
+def plot_sampling_distribution(dist_name, sample_means, mu, sigma, n):
+    sns.histplot(sample_means, kde=True, stat="density", color="skyblue", label="Sample Means")
+    x = np.linspace(min(sample_means), max(sample_means), 100)
+    plt.plot(x, norm.pdf(x, mu, sigma/np.sqrt(n)), color='red', lw=2, label="Normal PDF")
+    plt.title(f'{dist_name} Distribution - Sample Size {n}')
     plt.xlabel('Sample Mean')
     plt.ylabel('Density')
+    plt.legend()
+    plt.grid(True)
+
+def simulate_clt(pop_func, args, label, true_mu, true_sigma):
+    sample_sizes = [5, 10, 30, 50]
+    plt.figure(figsize=(16, 10))
+    plt.suptitle(f'Sampling Distribution of Sample Mean ({label})', fontsize=18)
+
+    for i, n in enumerate(sample_sizes):
+        means = [np.mean(pop_func(*args, n)) for _ in range(1000)]
+        plt.subplot(2, 2, i + 1)
+        plot_sampling_distribution(label, means, true_mu, true_sigma, n)
+
+    plt.tight_layout(rect=[0, 0.03, 1, 0.95])
     plt.show()
+
+# Uniform [0,1]
+simulate_clt(np.random.uniform, (0, 1), 'Uniform[0,1]', 0.5, np.sqrt(1/12))
+
+# Exponential (λ=1)
+simulate_clt(np.random.exponential, (1,), 'Exponential(λ=1)', 1.0, 1.0)
+
+# Binomial (n=10, p=0.5)
+simulate_clt(np.random.binomial, (10, 0.5), 'Binomial(n=10, p=0.5)', 5.0, np.sqrt(10*0.5*0.5))
 </code></pre>
-<pre><code class="language-python">sample_sizes = [5, 10, 30, 50]
-
-distributions = {
-    "Uniform": uniform_pop,
-    "Exponential": exponential_pop,
-    "Binomial": binomial_pop
-}
-
-for dist_name, population in distributions.items():
-    for size in sample_sizes:
-        means = generate_sample_means(population, sample_size=size)
-        plot_sampling_distribution(means, f"{dist_name} Distribution - Sample Size {size}")
-</code></pre>
-<p><img alt="alt text" src="../image.png"/></p>
-<p><img alt="alt text" src="../image-2.png"/></p>
-<p><img alt="alt text" src="../image-3.png"/></p>
+<h2 id="_1"><img alt="alt text" src="../image-4.png"/></h2>
+<h3 id="analysis">🧠 Analysis</h3>
+<ul>
+<li><strong>Uniform Distribution</strong>: Converges quickly due to symmetry and finite bounds.</li>
+<li><strong>Exponential Distribution</strong>: Skewed and unbounded—requires larger <span class="arithmatex">\(n\)</span> for normality to emerge.</li>
+<li><strong>Binomial Distribution</strong>: Discrete but symmetric here—converges moderately well.</li>
+</ul>
+<p>✅ <strong>Observation</strong>: As sample size increases, histograms become more bell-shaped and closer to the red normal curve, confirming the CLT.</p>
 <hr/>
-<h3 id="3-parameter-exploration">🔍 3. Parameter Exploration</h3>
-<p>We can visualize how the <strong>spread (variance)</strong> of the sampling distribution 
- as sample size increases and how the <strong>shape</strong> tends toward normality.</p>
-<pre><code class="language-python">import pandas as pd
-
-summary = []
-
-for dist_name, population in distributions.items():
-    for size in sample_sizes:
-        means = generate_sample_means(population, sample_size=size)
-        summary.append({
-            "Distribution": dist_name,
-            "Sample Size": size,
-            "Mean of Sample Means": np.mean(means),
-            "Std of Sample Means": np.std(means)
-        })
-
-df_summary = pd.DataFrame(summary)
-print(df_summary)
-</code></pre>
-<h4 id="observations">Observations:</h4>
+<h3 id="real-world-applications-of-clt">🌍 Real-World Applications of CLT</h3>
 <ul>
-<li>The <strong>standard deviation</strong> of the sample mean decreases as sample size increases, confirming that larger samples give more stable estimates.</li>
-<li>Even <strong>skewed distributions</strong> (like exponential) show normality in the sampling mean as sample size increases.</li>
-</ul>
-<hr/>
-<h3 id="4-practical-applications-of-clt">🛠️ 4. Practical Applications of CLT</h3>
-<h4 id="estimation-of-population-parameters"><strong>Estimation of Population Parameters</strong></h4>
-<ul>
-<li>CLT allows the use of sample means to estimate population means with known confidence intervals.</li>
-</ul>
-<h4 id="quality-control"><strong>Quality Control</strong></h4>
-<ul>
-<li>Manufacturers monitor sample means from production lines to detect anomalies or drifts.</li>
-</ul>
-<h4 id="finance"><strong>Finance</strong></h4>
-<ul>
-<li>Portfolio returns over time are often modeled using the normal distribution due to the CLT.</li>
-</ul>
-<hr/>
-<h3 id="conclusion">📌 Conclusion</h3>
-<p>Through simulations, we observed:</p>
-<ul>
-<li>The <strong>robustness</strong> of the CLT across distributions.</li>
-<li>How <strong>sample size</strong> affects the convergence to normality.</li>
-<li>How the <strong>spread</strong> of the sampling distribution shrinks with larger samples.</li>
-</ul>
-<p>This highlights the CLT’s central role in statistical inference, allowing probabilistic statements even when the original data are non-normal.</p>
-<hr/>
-<h3 id="resources">📎 Resources</h3>
-<ul>
-<li>NumPy Documentation: <a href="https://numpy.org/doc/">https://numpy.org/doc/</a></li>
-<li>Seaborn Visualization: <a href="https://seaborn.pydata.org/">https://seaborn.pydata.org/</a></li>
-<li>CLT Explanation (Khan Academy): <a href="https://www.khanacademy.org/math/statistics-probability/sampling-distributions-library">https://www.khanacademy.org/math/statistics-probability/sampling-distributions-library</a></li>
+<li><strong>Surveys</strong>: Estimating population averages from samples</li>
+<li><strong>Manufacturing</strong>: Analyzing sample means in quality control</li>
+<li><strong>Finance</strong>: Modeling returns aggregated over time intervals</li>
 </ul>
 <hr/>
 </div>
