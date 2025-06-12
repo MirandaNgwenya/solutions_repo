@@ -36,157 +36,75 @@ governs the dynamics of charged particles in electromagnetic fields. It underpin
 * **Electric Fields ($\vec{E}$)**: Accelerate charged particles in straight lines.
 * **Magnetic Fields ($\vec{B}$)**: Cause particles to move in circular or helical paths due to the $\vec{v} \times \vec{B}$ force.
 * **Crossed Fields**: Can create **drift motions**, such as **E × B** drift.
-
 ---
 
 ## **2. Simulating Particle Motion**
 
 We’ll use **Euler’s method** for simplicity, though **Runge-Kutta** is better for accuracy.
 
-### **Python Implementation**
-
 ```python
+
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-# Lorentz force calculation
-def lorentz_force(q, v, E, B):
+# Constants
+q = 1.0       # charge
+m = 1.0       # mass
+B = np.array([0, 0, 1])  # magnetic field in z-direction
+E = np.array([1, 0, 0])  # electric field in x-direction
+dt = 0.01
+steps = 2000
+
+def lorentz_force(v, E, B):
     return q * (E + np.cross(v, B))
 
-# Particle motion simulation using Euler's method
-def simulate_particle_motion(q, m, E, B, v0, r0, dt=1e-6, steps=10000):
+def simulate_motion(v0, r0, E_field, B_field):
     r = np.zeros((steps, 3))
     v = np.zeros((steps, 3))
     r[0], v[0] = r0, v0
 
     for i in range(1, steps):
-        F = lorentz_force(q, v[i-1], E, B)
-        a = F / m
+        a = lorentz_force(v[i-1], E_field, B_field) / m
         v[i] = v[i-1] + a * dt
         r[i] = r[i-1] + v[i] * dt
-
     return r
 
-# Common parameters
-q = 1.0  # Coulombs
-m = 0.001  # kg
+# Plot settings
+fig = plt.figure(figsize=(10, 15))
 
-# Scenario A: Circular motion in magnetic field
-E_a = np.array([0.0, 0.0, 0.0])
-B_a = np.array([0.0, 0.0, 1.0])
-v0_a = np.array([10.0, 0.0, 0.0])
-r0_a = np.array([0.0, 0.0, 0.0])
-r_a = simulate_particle_motion(q, m, E_a, B_a, v0_a, r0_a)
-
-# Scenario B: E x B drift
-E_b = np.array([10.0, 0.0, 0.0])
-B_b = np.array([0.0, 0.0, 1.0])
-v0_b = np.array([0.0, 0.0, 0.0])
-r0_b = np.array([0.0, 0.0, 0.0])
-r_b = simulate_particle_motion(q, m, E_b, B_b, v0_b, r0_b)
-
-# Scenario C: Helical motion in magnetic field
-E_c = np.array([0.0, 0.0, 0.0])
-B_c = np.array([0.0, 0.0, 1.0])
-v0_c = np.array([10.0, 0.0, 5.0])
-r0_c = np.array([0.0, 0.0, 0.0])
-r_c = simulate_particle_motion(q, m, E_c, B_c, v0_c, r0_c)
-
-# Plotting all 3 scenarios
-fig = plt.figure(figsize=(15, 10))
-
-# Circular motion
-ax1 = fig.add_subplot(131, projection='3d')
-ax1.plot(r_a[:, 0], r_a[:, 1], r_a[:, 2])
+# 1. Circular trajectory
+r1 = simulate_motion(v0=[1, 0, 0], r0=[0, 0, 0], E_field=[0, 0, 0], B_field=B)
+ax1 = fig.add_subplot(311, projection='3d')
+ax1.plot(r1[:,0], r1[:,1], r1[:,2])
 ax1.set_title("Circular Trajectory in Magnetic Field")
-ax1.set_xlabel("x [m]")
-ax1.set_ylabel("y [m]")
-ax1.set_zlabel("z [m]")
+ax1.set_xlabel("x")
+ax1.set_ylabel("y")
+ax1.set_zlabel("z")
 
-# E x B drift
-ax2 = fig.add_subplot(132, projection='3d')
-ax2.plot(r_b[:, 0], r_b[:, 1], r_b[:, 2])
+# 2. E × B Drift
+r2 = simulate_motion(v0=[0, 1, 0], r0=[0, 0, 0], E_field=E, B_field=B)
+ax2 = fig.add_subplot(312, projection='3d')
+ax2.plot(r2[:,0], r2[:,1], r2[:,2])
 ax2.set_title("E × B Drift of Charged Particle")
-ax2.set_xlabel("x [m]")
-ax2.set_ylabel("y [m]")
-ax2.set_zlabel("z [m]")
+ax2.set_xlabel("x")
+ax2.set_ylabel("y")
+ax2.set_zlabel("z")
 
-# Spiral motion
-ax3 = fig.add_subplot(133, projection='3d')
-ax3.plot(r_c[:, 0], r_c[:, 1], r_c[:, 2])
+# 3. Helical / Spiral trajectory
+r3 = simulate_motion(v0=[1, 0, 0.5], r0=[0, 0, 0], E_field=[0, 0, 0], B_field=B)
+ax3 = fig.add_subplot(313, projection='3d')
+ax3.plot(r3[:,0], r3[:,1], r3[:,2])
 ax3.set_title("Stable Spiral Trajectory in Magnetic Field")
-ax3.set_xlabel("x [m]")
-ax3.set_ylabel("y [m]")
-ax3.set_zlabel("z [m]")
+ax3.set_xlabel("x")
+ax3.set_ylabel("y")
+ax3.set_zlabel("z")
 
 plt.tight_layout()
 plt.show()
-
 ```
+![alt text](image-2.png)
 
-
-## **3. Parameter Exploration and Motion Types**
-
-### **Physical Constants**
-
-```python
-q = 1.0         # 1 Coulomb
-m = 0.001       # 1 gram = 0.001 kg
-```
-
-### **Example: Circular Motion in a Uniform Magnetic Field**
-
-```python
-B = np.array([0, 0, 1])
-E = np.array([0, 0, 0])
-v0 = np.array([10.0, 0, 0])
-r0 = np.array([0, 0, 0])
-
-r, v = simulate_particle(q, m, E, B, v0, r0)
-
-plt.figure()
-plt.plot(r[:, 0], r[:, 1])
-plt.title("Circular Motion (Uniform Magnetic Field)")
-plt.xlabel("x [m]")
-plt.ylabel("y [m]")
-plt.axis('equal')
-plt.grid()
-plt.show()
-```
-
-### **Helical Motion (Spiral in z-direction)**
-
-```python
-v0 = np.array([10.0, 0, 5.0])
-r, v = simulate_particle(q, m, E, B, v0, r0)
-
-fig = plt.figure()
-ax = fig.add_subplot(111, projection='3d')
-ax.plot(r[:, 0], r[:, 1], r[:, 2])
-ax.set_title("Helical Motion (z-direction spiral)")
-plt.show()
-```
-
-### **Crossed E and B Fields (Interesting Drift Trajectory)**
-
-```python
-E = np.array([10.0, 0, 0])
-B = np.array([0, 0, 1.0])
-v0 = np.array([0, 0, 0])
-r, v = simulate_particle(q, m, E, B, v0, r0)
-
-plt.figure()
-plt.plot(r[:, 0], r[:, 1])
-plt.title("E × B Drift Motion")
-plt.xlabel("x [m]")
-plt.ylabel("y [m]")
-plt.axis('equal')
-plt.grid()
-plt.show()
-```
-![alt text](image-1.png)
----
 
 ## **4. Visualizing and Interpreting Results**
 
